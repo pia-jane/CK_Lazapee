@@ -1,0 +1,64 @@
+{% load static %}
+
+<html>
+    <head>
+        <title>Lazapee</title>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
+        <link rel="stylesheet" href="{% static '/bootstrap/css/bootstrap.min.css' %}">
+        <link rel="stylesheet" href="{% static '/bootstrap/css/custom.css' %}">
+
+        <script src="{% static '/bootstrap/js/bootstrap.min.js' %}"></script>
+       
+    </head>
+    <body>
+
+    <!-- Navigation Bar-->
+        <nav class="navbar navbar-dark bg-custom mb-3 sticky-top" style="background-color: #3a0b57;">
+            <div class="container-fluid">
+                <a class="navbar-brand mb-0">Lazapee</span> </a>
+                {% block navbar %}
+                {% endblock %}
+            </div>
+        </nav>
+
+
+        <div class="container">
+            <div class="row">
+    
+    <!-- Side Bar-->
+                <div class="col-2 justify-content-left">
+                    <style>
+                        .sidebar-menu li {
+                            margin-bottom: 10px;
+                            align-items: center;
+                            justify-content: center;
+                            
+                        }
+            
+                        .sidebar-menu a {
+                            width: 100%;
+                            text-align: center;
+                        }
+                    </style>
+                        {% block sidebar %}
+                        {% endblock %}
+                </div>
+
+    <!-- Contents-->
+        <div class="col-10">
+            <div class="row justify-content-center" >
+                {% block content %}
+                {% endblock %}
+            </div>
+        </div>
+        </div>  
+        </div>  
+
+        <footer class="bg-custom p-3 mt-auto text-center text-white fixed-bottom" style="background-color: #391075;">
+            <!-- Footer -->
+            <div class="container"> Bico, Calado, Montano</div>
+            <!-- Footer -->
+        </footer>
+    </body>
+</html>
+
