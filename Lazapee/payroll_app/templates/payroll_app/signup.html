@@ -1,0 +1,68 @@
+{% extends 'payroll_app/base.html' %}
+{% load static %}
+
+{% block navbar %}
+    <a class="navbar-brand mb-0" href=#>Lazapee </a>
+{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-center align-items-center" style="min-height: 50vh;">  
+    <div class="card shadow w-50 mx-3" style="max-width: 600px;">
+
+        <div class="card-header text-white" style="background-color: #EE4932;">
+            <h4>Create an Account</h4>
+        </div>
+
+    <!-- Message Display Section -->
+        {% if messages %}
+            <div class="alert alert-warning mt-3" role="alert">
+                {% for message in messages %}
+                    {{ message }}<br>
+                {% endfor %}
+            </div>
+        {% endif %}
+        
+    <!-- Form -->
+        <div class="card-body">
+
+            <form method="POST" action="{% url 'signup' %}">
+                {% csrf_token %}
+
+                <div class="row">
+                    <div class="d-flex justify-content-center">
+                        <div class="form-group mb-3" style="width: 300px;">
+                            <input type="text" class="form-control w-100" id="username" name="username" placeholder="Username" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="d-flex justify-content-center">
+                        <div class="form-group mb-3" style="width: 300px;">
+                            <input type="password" class="form-control w-100" id="password1" name="password1" placeholder="Password" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="d-flex justify-content-center">
+                        <div class="form-group mb-3" style="width: 300px;">
+                            <input type="password" class="form-control w-100" id="password2" name="password2" placeholder="Confirm Password" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="d-grid gap-2 col-4 mx-auto">
+                        <button type="submit" class="mt-3 btn btn-success">Sign up</button>
+                    </div>              
+                </div>
+            </form>                
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
