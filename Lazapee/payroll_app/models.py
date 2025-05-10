@@ -5,7 +5,7 @@ from django.db import models
 class Employee(models.Model):
     name = models.CharField(max_length=50)
     id_number = models.CharField(max_length=15, unique=True)
-    rate = models.FloatField
+    rate = models.FloatField(default = 0.0)
     overtime_pay = models.FloatField(null=True, blank=True)
     allowance = models.FloatField(null=True, blank=True)
     objects = models.Manager()
@@ -46,6 +46,7 @@ class Payslip(models.Model):
     sss =  models.FloatField()
     overtime = models.FloatField()
     total_pay = models.FloatField()
+    objects = models.Manager()
 
     def getIDNumber(self):
         return self.employee.id_number
@@ -93,5 +94,13 @@ class Payslip(models.Model):
         return f"pk: {self.pk}, Employee: {self.getIDNumber()}, Period: {self.month} {self.date_range}, {self.year}, Cycle: {self.pay_cycle}, Total Pay: {self.total_pay}"
     
 
+class Account(models.Model):
+    username = models.CharField(max_length=200, unique=True)
+    password1 = models.CharField(max_length=200)
 
+    def getUsername(self):
+        return self.username
+
+    def getPassword(self):
+        return self.password1
 

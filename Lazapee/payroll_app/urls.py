@@ -23,6 +23,11 @@ from . import views
 urlpatterns = [
     path("admin/", admin.site.urls), 
     path('', views.login, name='login'),
-    path('', views.signup, name='signup')
+    path('signup', views.signup, name='signup'),
+    path('payroll', views.payroll, name='payroll'),
+    path('delete_employee/<int:pk>/', views.delete_employee, name='delete_employee'),
+    path('add_overtime/<int:pk>', views.add_overtime, name='add_overtime'),
+    path('add_employee', views.add_employee, name='add_employee')
+
 
 ]
