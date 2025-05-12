@@ -8,6 +8,8 @@
         <i class="bi bi-person-fill"></i> Employee</a>
     <a href=# style="color: white"> 
         <i class="bi bi-file-text"></i>Payslips</a>
+    <a href="{% url 'logout' %}" style="color: white">
+        <i class="bi bi-box-arrow-right"> Log Out</i></a>
 {% endblock %}
 
 {% block content %}
@@ -48,7 +50,7 @@
                         <td> {{ e.allowance }} </td>
                         <td> {{ e.overtime_pay }} </td>
                         <td> 
-                            <a href="#" class="btn btn-primary">Update</a>
+                            <a href="{% url 'update_employee' e.pk %}" class="btn btn-primary">Update</a>
                             <a href="{% url 'delete_employee' e.pk %}" class="btn btn-danger">Delete</a>
                             <form action="{% url 'add_overtime' e.pk %}" method="POST" style="display:inline;">
                                 {% csrf_token %}

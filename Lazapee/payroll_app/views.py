@@ -46,7 +46,7 @@ def payroll(request):
         return redirect('login')
    
    user = get_object_or_404(Account, pk=user_id)
-   employee = Employee.objects.all()
+   employee = Employee.objects.filter(account=user)
    return render(request, 'payroll_app/payroll.html', {'employee': employee})
 
 def delete_employee(request, pk):
@@ -64,14 +64,20 @@ def add_overtime(request, pk):
    try:
        overtime_hours = float(request.POST.get('overtime_hours', 0))
        overtime_pay = (employee.rate/160)*1.5*overtime_hours
-       employee.overtime_pay += overtime_pay
+       employee.overtime_pay = (employee.overtime_pay or 0.0) + overtime_pay
        employee.save()
-       messages.success(request, f"Overtime of {overtime_pay:.2f} added.")
+       messages.success(request, f"Overtime of {overtime_pay:.2f} added for {employee.name}.")
    except (ValueError):
        messages.error(request, "Invalid overtime hours.")
    return redirect('payroll')
 
 def add_employee(request):
+    user_id = request.session.get('user.id')
+    if not user_id:
+        return redirect('login')
+    
+    account = get_object_or_404(Account, pk=user_id)
+
     if request.method == "POST":
         name = request.POST.get('name')
         id_number = request.POST.get('id_number')
@@ -80,7 +86,29 @@ def add_employee(request):
 
         allowance = allowance if allowance else None
     
-        Employee.objects.create(name=name, id_number=id_number, rate=rate, allowance=allowance)
+        Employee.objects.create(account=account, name=name, id_number=id_number, rate=rate, allowance=allowance)
         return redirect('payroll')
     
     return render(request, 'payroll_app/add_employee.html')
+
+def update_employee(request, pk):
+    user_id = request.session.get('user.id')
+    if not user_id:
+        return redirect('login')
+    
+    employee = get_object_or_404(Employee, pk=pk)
+
+    if request.method == "POST":
+        employee.name = request.POST.get('name')
+        employee.id_number = request.POST.get('id_number')
+        employee.rate = request.POST.get('rate')
+        allowance = request.POST.get('allowance')
+        employee.allowance = allowance if allowance else None
+        employee.save()
+        return redirect('payroll')
+    
+    return render(request, 'payroll_app/update_employee.html', {'employee': employee})
+
+def logout(request):
+    request.session.flush()
+    return redirect("login")

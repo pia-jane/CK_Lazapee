@@ -27,7 +27,9 @@ urlpatterns = [
     path('payroll', views.payroll, name='payroll'),
     path('delete_employee/<int:pk>/', views.delete_employee, name='delete_employee'),
     path('add_overtime/<int:pk>', views.add_overtime, name='add_overtime'),
-    path('add_employee', views.add_employee, name='add_employee')
+    path('add_employee', views.add_employee, name='add_employee'),
+    path('update_employee/<int:pk>/', views.update_employee, name='update_employee'),
+    path('logout', views.logout, name='logout')
 
 
 ]

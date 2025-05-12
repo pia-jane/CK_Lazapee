@@ -2,7 +2,18 @@ from django.db import models
 
 # Create your models here.
 
+class Account(models.Model):
+    username = models.CharField(max_length=200, unique=True)
+    password1 = models.CharField(max_length=200)
+
+    def getUsername(self):
+        return self.username
+
+    def getPassword(self):
+        return self.password1
+
 class Employee(models.Model):
+    account = models.ForeignKey(Account, on_delete=models.CASCADE, null=True)
     name = models.CharField(max_length=50)
     id_number = models.CharField(max_length=15, unique=True)
     rate = models.FloatField(default = 0.0)
@@ -92,15 +103,3 @@ class Payslip(models.Model):
     
     def __str__(self):
         return f"pk: {self.pk}, Employee: {self.getIDNumber()}, Period: {self.month} {self.date_range}, {self.year}, Cycle: {self.pay_cycle}, Total Pay: {self.total_pay}"
-    
-
-class Account(models.Model):
-    username = models.CharField(max_length=200, unique=True)
-    password1 = models.CharField(max_length=200)
-
-    def getUsername(self):
-        return self.username
-
-    def getPassword(self):
-        return self.password1
-

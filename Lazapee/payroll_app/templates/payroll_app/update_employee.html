@@ -22,29 +22,29 @@
         </div>
 
         <div class="card-body">
-            <form method="POST" action="{% url 'add_employee' %}">{% csrf_token %}
+            <form method="POST" action="{% url 'update_employee' employee.pk %}">{% csrf_token %}
                 <div class="form-group mb-2">
                     <label class="form-label">Name</label>
-                    <input type="text" class="form-control" id="name" name="name" required>
+                    <input type="text" class="form-control" id="name" name="name" value='{{ employee.name }}' required>
                 </div>
 
                 <div class="form-group mb-2">
                         <label class="form-label">ID Number</label>
-                        <input type="number" class="form-control" id="id_number" name="id_number" required>
+                        <input type="number" class="form-control" id="id_number" name="id_number" value='{{ employee.id_number }}' required>
                 </div>
 
                 <div class="form-group mb-2">
                     <label class="form-label">Rate</label>
-                    <input type="number" class="form-control" id="rate" name="rate" required>
+                    <input type="number" class="form-control" id="rate" name="rate" value='{{ employee.rate }}' required>
                 </div>
 
                 <div class="form-group mb-2">  
                     <label class="form-label">Allowance (Optional)</label>
-                    <input type="number" class="form-control" id="allowance" name="allowance">
+                    <input type="number" class="form-control" id="allowance" name="allowance" value='{{ employee.allowance }}'>
                 </div>
                     
                 <div class="d-flex justify-content-center mt-3">
-                    <button type="submit" class="btn btn-success">Submit</button>
+                    <button type="submit" class="btn btn-success">Update Employee</button>
                 </div>
 
             </form>
