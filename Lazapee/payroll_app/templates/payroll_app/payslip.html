@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block navbar %}
+    <a class="navbar-brand" href="#">Lazapee Payroll</a>
+{% endblock %}
+
+{% block content %}
+<div class="card p-4 shadow-sm" style="max-width: 600px;">
+    <h3 class="text-center mb-4">Generate Payslip</h3>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="month" class="form-label">Month</label>
+            <input type="text" class="form-control" id="month" name="month" required>
+        </div>
+        <div class="mb-3">
+            <label for="date_range" class="form-label">Date Range</label>
+            <input type="text" class="form-control" id="date_range" name="date_range" required>
+        </div>
+        <div class="mb-3">
+            <label for="year" class="form-label">Year</label>
+            <input type="text" class="form-control" id="year" name="year" required>
+        </div>
+        <div class="mb-3">
+            <label for="pay_cycle" class="form-label">Pay Cycle</label>
+            <input type="text" class="form-control" id="pay_cycle" name="pay_cycle" required>
+        </div>
+        <button class="btn btn-primary" type="submit">Generate Payslip</button>
+    </form>
+
+    <div class="mt-4">
+        <h4>Generated Payslips</h4>
+        <table class="table table-bordered">
+            <thead class="table-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Employee</th>
+                    <th>Month</th>
+                    <th>Total Pay</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for payslip in payslips %}
+                <tr>
+                    <td>{{ payslip.id }}</td>
+                    <td>{{ payslip.id_number.name }}</td>
+                    <td>{{ payslip.month }}</td>
+                    <td>₱{{ payslip.total_pay }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -29,7 +29,8 @@ urlpatterns = [
     path('add_overtime/<int:pk>', views.add_overtime, name='add_overtime'),
     path('add_employee', views.add_employee, name='add_employee'),
     path('update_employee/<int:pk>/', views.update_employee, name='update_employee'),
-    path('logout', views.logout, name='logout')
+    path('logout', views.logout, name='logout'),
+    path('payslip', views.payslip, name='payslip'),
 
 
 ]
