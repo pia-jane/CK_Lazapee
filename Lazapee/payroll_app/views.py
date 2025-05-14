@@ -113,64 +113,69 @@ def update_employee(request, pk):
 def logout(request):
     request.session.flush()
     return redirect("login")
-def payslip(request):
-    # Check if user is logged in
-    user_id = request.session.get('user.id')
-    if not user_id:
-        return redirect('login')
 
-    user = get_object_or_404(Account, pk=user_id)
-    employee = Employee.objects.filter(account=user).first()  # Assuming one employee per account
+def payslip(request):
+    employees = Employee.objects.all()
+    payslips = Payslip.objects.all()
 
     if request.method == 'POST':
-        # Get data from the form (using the same method as add_employee)
-        month = request.POST.get('month')
-        date_range = request.POST.get('date_range')
+        selected = request.POST.get('payslip_name')
+        month = int(request.POST.get('month'))
         year = request.POST.get('year')
-        pay_cycle = request.POST.get('pay_cycle')
+        cycle  = request.POST.get('pay_cycle')
 
-        # Retrieve employee rate and other info
-        rate = employee.rate
-        allowance = employee.allowance if employee.allowance else 0
-        overtime_hours = employee.overtime_pay if employee.overtime_pay else 0
+        date_range='1-15' if cycle == '1' else '16-30'
 
-        # Calculations for deductions and total pay
-        overtime = overtime_hours
-        earnings_allowance = allowance
-        deductions_tax = rate * 0.10  # 10% tax
-        deductions_health = rate * 0.03  # 3% health
-        pag_ibig = rate * 0.01  # 1% pag-ibig
-        sss = rate * 0.04  # 4% sss
+        if selected == 'all':
+            payslip_for = employees
+        else:
+            try:
+                selected_employee = Employee.objects.get(id=selected)
+                payslip_for = [selected_employee]
+            except Employee.DoesNotExist:
+                messages.error(request, "Selected employee does not exist.")
+                return redirect('create_payslip')
 
-        total_pay = (rate / 2) + earnings_allowance + overtime - deductions_tax - deductions_health - pag_ibig - sss
+        for employee in payslip_for:
+            if Payslip.objects.filter(id_number=employee, month=month, year=year, pay_cycle=cycle).exists():
+                messages.warning(request, f"Payslip already exists for {employee.name} - {month}/{year}, Cycle {cycle}")
+                continue
 
-        # Save the payslip in the database
-        Payslip.objects.create(
-            id_number=employee,
-            month=month,
-            date_range=date_range,
-            year=year,
-            pay_cycle=pay_cycle,
-            rate=rate,
-            earnings_allowance=earnings_allowance,
-            deductions_tax=deductions_tax,
-            deductions_health=deductions_health,
-            pag_ibig=pag_ibig,
-            sss=sss,
-            overtime=overtime,
-            total_pay=total_pay
-        )
+            base_rate = employee.rate / 2
+            allowance = employee.allowance or 0
+            overtime = employee.overtime_pay or 0
+            pag_ibig = 100 if cycle == '1' else 0
+            philhealth = base_rate * 0.04 if cycle == '2' else 0
+            sss = base_rate * 0.045 if cycle == '2' else 0  
 
-        # Reset overtime
-        employee.overtime_pay = 0
-        employee.save()
+            temp_pay = base_rate + allowance + overtime
+            deductions = pag_ibig + philhealth + sss
+            tax = (temp_pay - deductions) *0.2
+            total_pay = temp_pay - deductions - tax
 
-        messages.success(request, f"Payslip generated successfully for {employee.name}.")
-        return redirect('payslip')  # Redirect to the same page or another one
+            Payslip.objects.create(
+                id_number=employee,
+                month=month,
+                date_range=date_range,
+                year=year,
+                pay_cycle=cycle,
+                rate=employee.rate,
+                earnings_allowance=allowance,
+                deductions_tax=tax,
+                deductions_health=philhealth,
+                pag_ibig=pag_ibig,
+                sss=sss,
+                overtime=overtime,
+                total_pay=round(total_pay, 2)
+            )
 
-    # GET request: Display payslip form and all payslips
-    payslips = Payslip.objects.all()  # Retrieve all payslips for display
-    return render(request, 'payroll_app/payslip.html', {
-        'employee': employee,
-        'payslips': payslips
+            employee.overtime_pay = 0
+            employee.save()
+
+            messages.success(request, "Payslip(s) created successfully.")
+        return redirect('create_payslip')
+
+    return render(request, 'payroll_app/create_payslip.html', {
+        'employee': employees,
+        'payslip': payslips,
     })

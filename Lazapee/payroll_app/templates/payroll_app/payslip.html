@@ -1,56 +1,131 @@
-{% extends "base.html" %}
+{% extends 'payroll_app/base.html' %}
 {% load static %}
 
+
 {% block navbar %}
-    <a class="navbar-brand" href="#">Lazapee Payroll</a>
+    <a class="navbar-brand mb-0" href=#>Lazapee </a>
+    <a href="{% url 'payroll' %}"style="color:white">
+        <i class="bi bi-person-fill"></i> Employee</a>
+    <a href=# style="color: white"> 
+        <i class="bi bi-file-text"></i>Payslips</a>
+    <a href="{% url 'logout' %}" style="color: white">
+        <i class="bi bi-box-arrow-right"> Log Out</i></a>
 {% endblock %}
 
 {% block content %}
-<div class="card p-4 shadow-sm" style="max-width: 600px;">
-    <h3 class="text-center mb-4">Generate Payslip</h3>
-    <form method="POST">
-        {% csrf_token %}
-        <div class="mb-3">
-            <label for="month" class="form-label">Month</label>
-            <input type="text" class="form-control" id="month" name="month" required>
+    {% if messages %}
+        <div class="alert alert-warning mt-3" role="alert">
+            {% for message in messages %}
+                {{ message }}<br>
+            {% endfor %}
         </div>
-        <div class="mb-3">
-            <label for="date_range" class="form-label">Date Range</label>
-            <input type="text" class="form-control" id="date_range" name="date_range" required>
-        </div>
-        <div class="mb-3">
-            <label for="year" class="form-label">Year</label>
-            <input type="text" class="form-control" id="year" name="year" required>
-        </div>
-        <div class="mb-3">
-            <label for="pay_cycle" class="form-label">Pay Cycle</label>
-            <input type="text" class="form-control" id="pay_cycle" name="pay_cycle" required>
-        </div>
-        <button class="btn btn-primary" type="submit">Generate Payslip</button>
-    </form>
+    {% endif %}
 
-    <div class="mt-4">
-        <h4>Generated Payslips</h4>
-        <table class="table table-bordered">
-            <thead class="table-light">
-                <tr>
-                    <th>ID</th>
-                    <th>Employee</th>
-                    <th>Month</th>
-                    <th>Total Pay</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for payslip in payslips %}
-                <tr>
-                    <td>{{ payslip.id }}</td>
-                    <td>{{ payslip.id_number.name }}</td>
-                    <td>{{ payslip.month }}</td>
-                    <td>₱{{ payslip.total_pay }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div class="container">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="mb-0"><b>Payroll Creation</b></h2>
+                </div>
+
+                <form method="POST" action="{% url 'payslip' %}">
+                {% csrf_token %}
+                
+                    <div class="form-group row">
+                        <label class="col-form-label col-md-4">Payroll for:</label>
+                        <div class="col-md-8 mb-2">
+                            <select class="form-control" id="payslip_name" name="payslip_name" required>
+                                <option value=""> Choose...</option>
+                                <option value="all">All Employees</option>
+                                {% for e in employee %}
+                                    <option value="{{ e.id }}"> {{ e.id_number }}  </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-2">
+                            <label class="form-label"> Month:</label>
+                            <select class="form-control" id="month" name="month" required>
+                                <option value=""> Select Month </option>
+                                    <option value="1"> January </option>
+                                    <option value="2"> February </option>
+                                    <option value="3"> March </option>
+                                    <option value="4"> April </option>
+                                    <option value="5"> May </option>
+                                    <option value="6"> June </option>
+                                    <option value="7"> July </option>
+                                    <option value="8"> August </option>
+                                    <option value="9"> September </option>
+                                    <option value="10"> October </option>
+                                    <option value="11"> November </option>
+                                    <option value="12"> December </option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-4 mb-2">
+                            <label class="form-label">Year</label>
+                            <input type="text" class="form-control" id="year" name="year" required>
+                        </div>
+
+                        <div class="col-md-4 mb-2">
+                            <label class="form-label">Cycle</label>
+                            <select class="form-control" id="pay_cycle" name="pay_cycle" required>
+                                <option value=""> Select Cycle </option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                            </select>
+                        </div>
+                    
+                    </div>
+                        
+                    <div class = "row">
+                        <div class="d-flex justify-content-center mt-3">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-</div>
+    
+    <div class="container">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="mb-0"><b>Payslips Summary</b></h2>
+                </div>
+                
+                <div class="col-12">
+                    <table class="table table-striped">
+                        <thead class="thead-light">
+                            <tr>
+                                <th scope="col"> ID Number </th>
+                                <th scope="col"> Date </th>
+                                <th scope="col"> Cycle </th>
+                                <th scope="col"> Total pay </th>
+                                <th scope="col"> Options </th>
+                            </tr> 
+                        </thead>
+                        <tbody>
+                            {% for p in payslip %}
+                            <tr>
+                                <td> {{ p.id_number.id_number}} </td>
+                                <td> {{ p.month }} {{ p.date_range }}, {{ p.year }} </td>
+                                <td> {{ p.pay_cycle }} </td>
+                                <td> {{ p.total_pay }} </td>
+                                <td> <a href="#" class="btn btn-primary">View</a> </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5">No payslips available.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
