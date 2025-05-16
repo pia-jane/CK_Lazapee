@@ -6,7 +6,7 @@
     <a class="navbar-brand mb-0" href=#>Lazapee </a>
     <a href="{% url 'payroll' %}"style="color:white">
         <i class="bi bi-person-fill"></i> Employee</a>
-    <a href=# style="color: white"> 
+    <a href="{% url 'payslip' %}" style="color: white"> 
         <i class="bi bi-file-text"></i>Payslips</a>
     <a href="{% url 'logout' %}" style="color: white">
         <i class="bi bi-box-arrow-right"> Log Out</i></a>
@@ -115,7 +115,7 @@
                                 <td> {{ p.month }} {{ p.date_range }}, {{ p.year }} </td>
                                 <td> {{ p.pay_cycle }} </td>
                                 <td> {{ p.total_pay }} </td>
-                                <td> <a href="#" class="btn btn-primary">View</a> </td>
+                                <td> <a href="{% url 'view_payslip' p.pk %}" class="btn btn-primary">View</a> </td>
                             </tr>
                             {% empty %}
                             <tr>
