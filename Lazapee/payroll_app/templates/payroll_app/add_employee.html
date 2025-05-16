@@ -2,52 +2,63 @@
 {% load static %}
 
 {% block navbar %}
-    <a class="navbar-brand mb-0" href=#>Lazapee </a>
-    <a href=# style="color:white">
+<div class="container-fluid d-flex align-items-center gap-4">
+    <a class="navbar-brand mb-0" href="{% url 'payroll' %}">Lazapee </a>
+    <a href="{% url 'payroll' %}" style="color:white">
         <i class="bi bi-person-fill"></i> Employee</a>
-    <a href=# style="color: white"> 
+    <a href="{% url 'payslip' %}" style="color: white"> 
         <i class="bi bi-file-text"></i>Payslips</a>
-     <a href="{% url 'logout' %}" style="color: white">
+     <a href="{% url 'logout' %}" class="text-white text-decoration-underline ms-auto">
         <i class="bi bi-box-arrow-right"> Log Out</i></a>
+ </div>
 {% endblock %}
 
 {% block content %}
 
 
-<div class="container-fluid d-flex justify-content-center align-items-center" style="min-height: 100vh; overflow-x: hidden;">
-    <div class="card shadow w-100 mx-3" style="max-width: 400px;">
-
-        <div class="card-header text-white"  style="background-color: #59257d;">
-            <h4>Create Employee</h4>
-        </div>
-
-        <div class="card-body">
-            <form method="POST" action="{% url 'add_employee' %}">{% csrf_token %}
-                <div class="form-group mb-2">
-                    <label class="form-label">Name</label>
-                    <input type="text" class="form-control" id="name" name="name" required>
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-4" >
+            <div class="card shadow border-0">
+                <div class="card-header text-white fw-bold" style="background-color: #370031;">
+                    <h4>Create Employee</h4>
                 </div>
 
-                <div class="form-group mb-2">
-                        <label class="form-label">ID Number</label>
-                        <input type="number" class="form-control" id="id_number" name="id_number" required>
-                </div>
+            <div class="card-body">
+                {% if messages %}
+                    <div class="alert alert-warning mt-2" role="alert">
+                        {% for message in messages %}
+                            {{ message }}<br>
+                        {% endfor %}
+                {% endif %}
 
-                <div class="form-group mb-2">
-                    <label class="form-label">Rate</label>
-                    <input type="number" class="form-control" id="rate" name="rate" required>
-                </div>
+                <form method="POST" action="{% url 'add_employee' %}">{% csrf_token %}
+                    <div class="form-group mb-2">
+                        <label class="form-label">Name</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
 
-                <div class="form-group mb-2">  
-                    <label class="form-label">Allowance (Optional)</label>
-                    <input type="number" class="form-control" id="allowance" name="allowance">
-                </div>
-                    
-                <div class="d-flex justify-content-center mt-3">
-                    <button type="submit" class="btn btn-success">Submit</button>
-                </div>
+                    <div class="form-group mb-2">
+                            <label class="form-label">ID Number</label>
+                            <input type="number" class="form-control" id="id_number" name="id_number" required>
+                    </div>
 
-            </form>
+                    <div class="form-group mb-2">
+                        <label class="form-label">Rate</label>
+                        <input type="number" class="form-control" id="rate" name="rate" min="0" step="1" required>
+                    </div>
+
+                    <div class="form-group mb-2">  
+                        <label class="form-label">Allowance (Optional)</label>
+                        <input type="number" class="form-control" id="allowance" name="allowance" min="0" step="1">
+                    </div>
+                        
+                    <div class="d-flex justify-content-center mt-2 gap-4">
+                        <button type="submit" class="btn btn-success">Submit</button>
+                         <a href="{% url 'payroll' %}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>

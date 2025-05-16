@@ -86,6 +86,10 @@ def add_employee(request):
         allowance = request.POST.get('allowance')
 
         allowance = allowance if allowance else None
+
+        if Employee.objects.filter(account=account, id_number=id_number).exists():
+            messages.error(request, f"Employee with ID number '{id_number}' already exists.")
+            return render(request, 'payroll_app/add_employee.html')
     
         Employee.objects.create(account=account, name=name, id_number=id_number, rate=rate, allowance=allowance)
         return redirect('payroll')
@@ -134,7 +138,7 @@ def payslip(request):
                 payslip_for = [selected_employee]
             except Employee.DoesNotExist:
                 messages.error(request, "Selected employee does not exist.")
-                return redirect('create_payslip')
+                return redirect('payslip')
 
         for employee in payslip_for:
             if Payslip.objects.filter(id_number=employee, month=month, year=year, pay_cycle=cycle).exists():
@@ -173,7 +177,7 @@ def payslip(request):
             employee.save()
 
             messages.success(request, "Payslip(s) created successfully.")
-        return redirect('create_payslip')
+        return redirect('payslip')
 
     return render(request, 'payroll_app/payslip.html', {
         'employee': employees,
