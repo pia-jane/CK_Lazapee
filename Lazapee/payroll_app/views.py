@@ -144,18 +144,28 @@ def payslip(request):
             if Payslip.objects.filter(id_number=employee, month=month, year=year, pay_cycle=cycle).exists():
                 messages.warning(request, f"Payslip already exists for {employee.name} - {month}/{year}, Cycle {cycle}")
                 continue
-
-            base_rate = employee.rate / 2
-            allowance = employee.allowance or 0
-            overtime = employee.overtime_pay or 0
-            pag_ibig = 100 if cycle == '1' else 0
-            philhealth = base_rate * 0.04 if cycle == '2' else 0
-            sss = base_rate * 0.045 if cycle == '2' else 0  
-
+            
+            emp_rate = employee.rate
+            allowance = employee.allowance if employee.allowance is not None else 0
+            overtime = employee.overtime_pay if employee.overtime_pay is not None else 0
+            
+            base_rate = emp_rate / 2
             temp_pay = base_rate + allowance + overtime
+
+            
+            if cycle == "1":
+                pag_ibig = 100
+                philhealth = 0
+                sss = 0
+            elif cycle == "2":
+                pag_ibig = 0
+                philhealth = emp_rate * 0.04
+                sss = emp_rate * 0.045
+
             deductions = pag_ibig + philhealth + sss
-            tax = (temp_pay - deductions) *0.2
-            total_pay = temp_pay - deductions - tax
+            tax = (base_rate + allowance + overtime - deductions) * 0.2
+            
+            total_pay = (base_rate + allowance + overtime) - deductions - tax
 
             Payslip.objects.create(
                 id_number=employee,
@@ -163,14 +173,14 @@ def payslip(request):
                 date_range=date_range,
                 year=year,
                 pay_cycle=cycle,
-                rate=employee.rate,
+                rate=emp_rate,
                 earnings_allowance=allowance,
                 deductions_tax=tax,
                 deductions_health=philhealth,
                 pag_ibig=pag_ibig,
                 sss=sss,
                 overtime=overtime,
-                total_pay=round(total_pay, 2)
+                total_pay=total_pay
             )
 
             employee.overtime_pay = 0

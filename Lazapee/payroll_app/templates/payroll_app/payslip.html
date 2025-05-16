@@ -4,7 +4,7 @@
 
 {% block navbar %}
 <div class="container-fluid d-flex align-items-center gap-4">
-    <a class="navbar-brand mb-0" href="{% url 'payroll' %}">Lazapee </a>
+    <a class="navbar-brand mb-0" href="{% url 'payroll' %}"><strong> Lazapee</strong> </a>
     <a href="{% url 'payroll' %}" style="color:white">
         <i class="bi bi-person-fill"></i> Employee</a>
     <a href="{% url 'payslip' %}" style="color: white"> 
@@ -21,7 +21,7 @@
         <div class="row">
             <div class="col-md-3">
                 <div class="card shadow border-0">
-                    <div class="card-header bg-dark text-white fw-bold fs-4">
+                    <div class="card-header text-white fw-bold fs-4" style="background-color: #832232;">
                         Create Payslips
                     </div>
                     
@@ -85,7 +85,7 @@
         
             <div class="col-md-9">
                 <div class="card shadow border-0">
-                    <div class="card-header bg-dark text-white fw-bold fs-4">
+                    <div class="card-header text-white fw-bold fs-4" style="background-color: #832232;">
                         Payslips Summary:
                     </div>
                     <div class="card-body">

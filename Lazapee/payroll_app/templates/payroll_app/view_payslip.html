@@ -3,7 +3,7 @@
 
 {% block navbar %}
 <div class="container-fluid d-flex align-items-center gap-4">
-    <a class="navbar-brand mb-0" href="{% url 'payroll' %}">Lazapee </a>
+    <a class="navbar-brand mb-0" href="{% url 'payroll' %}"><strong> Lazapee</strong> </a>
     <a href="{% url 'payroll' %}" style="color:white">
         <i class="bi bi-person-fill"></i> Employee</a>
     <a href="{% url 'payslip' %}" style="color: white"> 
@@ -14,71 +14,71 @@
 {% endblock %}
 
 {% block content %}
-<div class="container overflow-auto" style="max-height: 80vh;">
-    <div class="d-flex justify-content-between mb-3">
-        <div>
-            <h5><strong>NAME:</strong> {{ payslip.id_number.name }}</h5>
-            <h6><strong>ID NUMBER:</strong> {{ payslip.id_number.id_number }}</h6>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow border-0">
+                <div class="card-header text-white d-flex justify-content-between align-items-center" style="background-color: #370031;">
+                    <span class="fw-bold fs-4">Payslip Details</span>
+                </div>
+            
+                <div class="card-body">
+                    <div class="card mb-4">
+                        <div class="card-header text-white" style="background-color: #370031;"> Employee Details</div>
+                        <div class="card-body">
+                            <p><strong>Name:</strong> {{ payslip.id_number.name }}</p>
+                            <p><strong>ID Number:</strong> {{ payslip.id_number.id_number }}</p>
+                            <p><strong>Date:</strong> {{ payslip.date_range }}</p>
+                            <p><strong>Payslip ID:</strong> {{ payslip.id }}</p>
+                        </div>
+                    </div>
+
+                    <div class="card mb-4">
+                        <div class="card-header text-white" style="background-color: #370031;">Earnings</div>
+                        <div class="card-body">
+                            <p><strong>Base Pay:</strong> {{ payslip.getCycleRate|floatformat:2 }} </p>
+                            <p><strong>Allowance:</strong> {{ payslip.earnings_allowance|floatformat:2 }}</p>
+                            <p><strong>Overtime:</strong> {{ payslip.overtime|floatformat:2 }}</p>
+                        </div>
+                    </div>
+                     
+                    <div class="card mb-4">
+                        <div class="card-header text-white" style="background-color: #370031;">Gross Pay</div>
+                        <div class="card-body">
+                            <h5><strong>PHP {{ payslip.getCycleRate|add:payslip.earnings_allowance|add:payslip.getOvertime|floatformat:2 }}</strong></h5>
+                        </div>
+                    </div>
+
+                    <div class="card mb-4">
+                        <div class="card-header text-white" style="background-color: #370031;">Deductions</div>
+                        <div class="card-body">
+                            {% if payslip.pay_cycle == "1" %}
+                                <p><strong>Pag-ibig: </strong>{{ payslip.pag_ibig|floatformat:2 }}</p>
+                                <p><strong>Withholding Tax: </strong>{{ payslip.deductions_tax|floatformat:2 }}</p>
+                                <p><strong>Total Deductions: </strong>{{ payslip.pag_ibig|floatformat:2|add:payslip.deductions_tax|floatformat:2 }}</p>
+                            
+                            {% elif payslip.pay_cycle == "2" %}
+                                <p><strong>Withholding Tax: </strong>{{ payslip.deductions_tax|floatformat:2 }}</p>
+                                <p><strong>PhilHealth: </strong>{{ payslip.deductions_health|floatformat:2 }}</p> 
+                                <p><strong>SSS: </strong>{{ payslip.sss }}</p>
+                                <p><strong>Total Deductions: </strong>{{ payslip.deductions_tax|add:payslip.deductions_health|add:payslip.sss }}</p>
+                            
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="card mb-4">
+                        <div class="card-header text-white" style="background-color: #370031;">Total Pay</div>
+                        <div class="card-body">
+                            <h4><strong>NET PAY: PHP {{ payslip.total_pay|floatformat:2 }}</strong></h4>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
         </div>
-        <div class="text-end">
-            <h6><strong>DATE:</strong> {{ payslip.date_range }}</h6>
-            <h6><strong>PAYSLIP ID:</strong> {{ payslip.id }}</h6>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="d-flex justify-content-between mt-3">
-        <h5><strong>EARNINGS:</strong></h5>
-        <h5 class="text-end"> Amount </h5>
-    </div>
-
-    <div class="col-12">
-        <table class="table">
-            <tbody>
-                <tr>
-                    <td>Base Pay</td>
-                    <td class="align-middle">{{ payslip.getCycleRate|floatformat:2 }}</td>
-                </tr>
-                <tr>
-                    <td>Allowances</td>
-                    <td class="align-middle">{{ payslip.earnings_allowance|floatformat:2 }}</td>
-                </tr>
-                <tr>
-                    <td>Overtime</td>
-                    <td class="align-middle">{{ payslip.overtime|floatformat:2 }}</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <hr>
-        <div class="d-flex justify-content-between mt-3">
-            <h6 class="mb-0"><strong>GROSS PAY:</strong></h6>
-            <h6 class="mb-0"> PHP {{ payslip.getCycleRate|add:payslip.earnings_allowance|add:payslip.overtime|floatformat:2 }}</h6>
-        </div>
-
-        <h5 class="mt-4"><strong>DEDUCTIONS:</strong></h5>
-        <table class="table">
-                {% if payslip.pay_cycle == "1" %}
-                    <tr><td>Pag-ibig</td><td class="align-middle">{{ payslip.pag_ibig|floatformat:2 }}</td></tr>
-                {% elif payslip.pay_cycle == "2" %}
-                    <tr><td>Withholding Tax</td><td class="align-middle">{{ payslip.deductions_tax|floatformat:2 }}</td></tr>
-                    <tr><td>PhilHealth</td><td class="align-middle">{{ payslip.deductions_health|floatformat:2 }}</td></tr>
-                    <tr><td>SSS</td><td class="align-middle">{{ payslip.sss|floatformat:2 }}</td></tr>
-                {% endif %}
-            </tbody>
-        </table>
-
-        <h6 class="text-end"><strong>TOTAL DEDUCTIONS</strong>: PHP 
-            {% if payslip.pay_cycle == "1" %}
-                {{ payslip.pag_ibig|floatformat:2 }}
-            {% else %}
-                {{ payslip.deductions_tax|add:payslip.deductions_health|add:payslip.sss|floatformat:2 }}
-            {% endif %}
-        </h6>
-
-        <hr>
-        <h4 class="text-end text-dark"><strong>NET PAY:</strong> <strong>PHP {{ payslip.total_pay|floatformat:2 }}</strong></h4>
     </div>
 </div>
+
+
 {% endblock %}
