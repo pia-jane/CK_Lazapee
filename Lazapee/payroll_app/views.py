@@ -175,7 +175,7 @@ def payslip(request):
             messages.success(request, "Payslip(s) created successfully.")
         return redirect('create_payslip')
 
-    return render(request, 'payroll_app/create_payslip.html', {
+    return render(request, 'payroll_app/payslip.html', {
         'employee': employees,
         'payslip': payslips,
     })
