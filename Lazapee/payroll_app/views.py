@@ -179,3 +179,7 @@ def payslip(request):
         'employee': employees,
         'payslip': payslips,
     })
+
+def view_payslip(request, pk):
+    payslip = get_object_or_404(Payslip, pk=pk)
+    return render(request, 'payroll_app/view_payslip.html', {'payslip': payslip})
