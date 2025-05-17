@@ -3,6 +3,7 @@ from django.contrib import messages
 from .models import Employee, Payslip, Account
 from django.contrib.auth.hashers import make_password, check_password
 from django import forms
+from decimal import Decimal
 
 # Create your views here.
 
@@ -63,7 +64,7 @@ def add_overtime(request, pk):
    employee = get_object_or_404(Employee, pk=pk)
    
    try:
-       overtime_hours = float(request.POST.get('overtime_hours', 0))
+       overtime_hours = Decimal(request.POST.get('overtime_hours', 0))
        overtime_pay = (employee.rate/160)*1.5*overtime_hours
        employee.overtime_pay = (employee.overtime_pay or 0.0) + overtime_pay
        employee.save()
@@ -159,11 +160,11 @@ def payslip(request):
                 sss = 0
             elif cycle == "2":
                 pag_ibig = 0
-                philhealth = emp_rate * 0.04
-                sss = emp_rate * 0.045
+                philhealth = emp_rate * Decimal(0.04)
+                sss = emp_rate * Decimal(0.045)
 
             deductions = pag_ibig + philhealth + sss
-            tax = (base_rate + allowance + overtime - deductions) * 0.2
+            tax = (base_rate + allowance + overtime - deductions) * Decimal(0.2)
             
             total_pay = (base_rate + allowance + overtime) - deductions - tax
 
