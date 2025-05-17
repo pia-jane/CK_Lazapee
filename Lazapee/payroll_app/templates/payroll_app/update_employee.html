@@ -1,3 +1,23 @@
+<!-- 
+231193                  233355          
+Sophia Jane Calado      Tanner Khoo     Luiis Lau   
+
+May 17,2025
+----
+I hereby attest to the truth of the following facts:
+
+I have not discussed the python code in my program with anyone
+other than my instructor or the teaching assistants assigned to this course.
+
+I have not used python code obtained from another student, or
+any other unauthorized source, whether modified or unmodified.
+
+If any python code or documentation used in my program was
+obtained from another source, it has been clearly noted with citations in the
+comments of my program.
+----
+-->
+
 {% extends 'payroll_app/base.html' %}
 {% load static %}
 
@@ -8,9 +28,11 @@
         <i class="bi bi-person-fill"></i> Employee</a>
     <a href="{% url 'payslip' %}" style="color: white"> 
         <i class="bi bi-file-text"></i>Payslips</a>
-     <a href="{% url 'logout' %}" class="text-white text-decoration-underline ms-auto">
+    <a href="{% url 'manage_account' user.pk %}" class="text-white text-decoration-underline ms-auto">
+        <i class="bi bi-box-arrow-right"> Manage Account</i></a>
+    <a href="{% url 'logout' %}" class="text-white text-decoration-underline ms-auto">
         <i class="bi bi-box-arrow-right"> Log Out</i></a>
- </div>
+</div>
 {% endblock %}
 
 {% block content %}

@@ -1,0 +1,78 @@
+<!-- 
+231193                  233355          
+Sophia Jane Calado      Tanner Khoo     Luiis Lau   
+
+May 17,2025
+----
+I hereby attest to the truth of the following facts:
+
+I have not discussed the python code in my program with anyone
+other than my instructor or the teaching assistants assigned to this course.
+
+I have not used python code obtained from another student, or
+any other unauthorized source, whether modified or unmodified.
+
+If any python code or documentation used in my program was
+obtained from another source, it has been clearly noted with citations in the
+comments of my program.
+----
+-->
+
+
+{% extends 'payroll_app/base.html' %}
+{% load static %}
+
+{% block navbar %}
+<div class="container-fluid d-flex align-items-center gap-4">
+    <a class="navbar-brand mb-0" href="{% url 'payroll' %}"><strong> Lazapee</strong> </a>
+    <a href="{% url 'payroll' %}" style="color:white">
+        <i class="bi bi-person-fill"></i> Employee</a>
+    <a href="{% url 'payslip' %}" style="color: white"> 
+        <i class="bi bi-file-text"></i>Payslips</a>
+    <a href="{% url 'manage_account' }" style="color: white">
+        <i class="bi bi-box-arrow-right"> Manage Account</i></a>
+    <a href="{% url 'logout' %}" class="text-white text-decoration-underline ms-auto">
+        <i class="bi bi-box-arrow-right"> Log Out</i></a>
+</div>
+{% endblock %}
+
+{% block content %}
+
+<div class="col-md-6">
+    <div class="card">
+        <div class="card-header text-white" style="background-color: #370031;">
+            <h5 class="card-title">Manage Account</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="d-flex justify-content-center mt-2">
+                    <h5> Welcome, {{user.username}}!</h5>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="d-flex justify-content-center mt-2">
+                    <form action="{% url 'change_password' %}" method="get">
+                        <button type="submit" class="btn btn-success"> Change Password</button>
+                    </form>
+                </div>
+            </div>
+            <div class="row">
+                <div class="d-flex justify-content-center mt-2">
+                    <form action="{% url 'delete_account' user.id %}" method="post">
+                       {% csrf_token %}
+                       <button type="submit" class="btn btn-danger">Delete Account</button> 
+                    </form>
+                </div>
+            </div>
+            <div class="row">
+                <div class="d-flex justify-content-center mt-2">
+                    <form action="{% url 'payroll' %}" method="get">
+                        <button type="submit" class="btn btn-secondary">Back</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

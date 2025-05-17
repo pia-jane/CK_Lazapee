@@ -1,3 +1,23 @@
+<!-- 
+231193                  233355          
+Sophia Jane Calado      Tanner Khoo     Luiis Lau   
+
+May 17,2025
+----
+I hereby attest to the truth of the following facts:
+
+I have not discussed the python code in my program with anyone
+other than my instructor or the teaching assistants assigned to this course.
+
+I have not used python code obtained from another student, or
+any other unauthorized source, whether modified or unmodified.
+
+If any python code or documentation used in my program was
+obtained from another source, it has been clearly noted with citations in the
+comments of my program.
+----
+-->
+
 {% extends 'payroll_app/base.html' %}
 {% load static %}
 
@@ -15,7 +35,6 @@
             <h4>Log In to your Account</h4>
         </div>
 
-    <!-- Message Display Section -->
         {% if messages %}
             <div class="alert alert-warning mt-3" role="alert">
                 {% for message in messages %}
@@ -24,7 +43,6 @@
             </div>
         {% endif %}
 
-    <!-- Form -->
         <div class="card-body">
 
             <form method="POST" action="{% url 'login' %}">

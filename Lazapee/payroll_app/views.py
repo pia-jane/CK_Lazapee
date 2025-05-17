@@ -48,7 +48,7 @@ def payroll(request):
         return redirect('login')
    
    user = get_object_or_404(Account, pk=user_id)
-   employee = Employee.objects.filter(account=user)
+   employee = Employee.objects.all()
    return render(request, 'payroll_app/payroll.html', {'employee': employee})
 
 def delete_employee(request, pk):
@@ -64,11 +64,14 @@ def add_overtime(request, pk):
    employee = get_object_or_404(Employee, pk=pk)
    
    try:
-       overtime_hours = Decimal(request.POST.get('overtime_hours', 0))
-       overtime_pay = (employee.rate/160)*1.5*overtime_hours
-       employee.overtime_pay = (employee.overtime_pay or 0.0) + overtime_pay
-       employee.save()
-       messages.success(request, f"Overtime of {overtime_pay:.2f} added for {employee.name}.")
+    overtime_hours = Decimal(request.POST.get('overtime_hours', '0'))
+    overtime_pay = (employee.rate / Decimal('160')) * Decimal('1.5') * overtime_hours
+    existing_overtime_pay = employee.overtime_pay or Decimal('0')
+    if not isinstance(existing_overtime_pay, Decimal):
+        existing_overtime_pay = Decimal(str(existing_overtime_pay))
+    employee.overtime_pay = existing_overtime_pay + overtime_pay
+    employee.save()
+    messages.success(request, f"Overtime of {overtime_pay:.2f} added for {employee.name}.")
    except (ValueError):
        messages.error(request, "Invalid overtime hours.")
    return redirect('payroll')
@@ -146,22 +149,24 @@ def payslip(request):
                 messages.warning(request, f"Payslip already exists for {employee.name} - {month}/{year}, Cycle {cycle}")
                 continue
             
-            emp_rate = employee.rate
-            allowance = employee.allowance if employee.allowance is not None else 0
-            overtime = employee.overtime_pay if employee.overtime_pay is not None else 0
+            emp_rate = Decimal(employee.rate)
+            allowance = Decimal(employee.allowance if employee.allowance is not None else 0)
+            overtime = Decimal(employee.overtime_pay if employee.overtime_pay is not None else 0)
             
-            base_rate = emp_rate / 2
+            base_rate = emp_rate / Decimal(2)
             temp_pay = base_rate + allowance + overtime
 
             
             if cycle == "1":
-                pag_ibig = 100
-                philhealth = 0
-                sss = 0
+                pag_ibig = Decimal(100)
+                philhealth = Decimal(0)
+                sss = Decimal(0)
             elif cycle == "2":
-                pag_ibig = 0
+                pag_ibig = Decimal(0)
                 philhealth = emp_rate * Decimal(0.04)
                 sss = emp_rate * Decimal(0.045)
+            else:
+                pag_ibig = philhealth = sss = Decimal(0)
 
             deductions = pag_ibig + philhealth + sss
             tax = (base_rate + allowance + overtime - deductions) * Decimal(0.2)
@@ -184,7 +189,7 @@ def payslip(request):
                 total_pay=total_pay
             )
 
-            employee.overtime_pay = 0
+            employee.overtime_pay = Decimal(0)
             employee.save()
 
             messages.success(request, "Payslip(s) created successfully.")
@@ -198,3 +203,44 @@ def payslip(request):
 def view_payslip(request, pk):
     payslip = get_object_or_404(Payslip, pk=pk)
     return render(request, 'payroll_app/view_payslip.html', {'payslip': payslip})
+
+def manage_account(request):
+   user_id = request.session.get('user.id')
+   if not user_id:
+        return redirect('login')
+   
+   user = get_object_or_404(Account, pk=user_id)
+   return render(request, 'payroll_app/manage_account.html', {'user':user})
+
+def change_password(request):
+    user_id = request.session.get('user.id')
+    if not user_id:
+        return redirect("login")
+
+    user = get_object_or_404(Account, pk=user_id)
+
+    if request.method == "POST":
+        current_password = request.POST.get("current_password")
+        new_password = request.POST.get("new_password")
+        confirm_password = request.POST.get("confirm_password")
+
+        if not check_password(current_password, user.password1):
+            messages.error(request, "Incorrect current password.")
+            return redirect("change_password")
+
+        if new_password != confirm_password:
+            messages.error(request, "New passwords do not match.")
+            return redirect("change_password")
+
+        user.password1 = make_password(new_password)
+        user.save()
+        messages.success(request, "Password changed successfully!")
+        return redirect("manage_account")
+
+    return render(request, "payroll_app/change_password.html", {'user': user})
+
+def delete_account(request, pk):
+    user = get_object_or_404(Account, pk=pk)
+    user.delete()
+    messages.success(request, "Account deleted successfully")
+    return redirect('login')
